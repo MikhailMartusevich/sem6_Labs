@@ -10,10 +10,9 @@ public:
 	void push_front(T data);
 	void pop_front();
 	
-	T& operator[](const int index);
 	friend std::ostream& operator<< (std::ostream& msg, const List<T> lst) {
-			if (lst.head == nullptr)
-				throw ("list is empty");
+			if (lst.head == nullptr)		// if list is empty
+				throw ("list is empty");	// throw exception
 
 			Element* temp = lst.head;
 			msg << "{ ";
@@ -40,8 +39,8 @@ private:
 			this->nextptr = nextptr;
 		}
 	};
-	size_t size{ 0 }; // size of list
-	Element* head{ nullptr }; // head pointer;
+	size_t size{ 0 };			// size of list
+	Element* head{ nullptr };	// head pointer;
 };
 
 template <typename T>
@@ -79,44 +78,33 @@ void List<T>::pop_front() {
 		delete temp;
 		size--;
 	}
-	else
-		throw ("Out of range pop_front");
-}
-
-template<typename T>
-T& List<T>::operator[](const int index) {
-	size_t tempcount = { 0 };
-	Element* temp = this->head;
-	while (temp != nullptr)
-	{
-		if (tempcount == index)
-		{
-			return temp->data;
-		}
-		temp = temp->nextptr;
-		tempcount++;
-	}
+	else									// if size of list < 0 
+		throw ("Out of range pop_front");	// throw exception
 }
 
 template<typename T>
 bool List<T>::operator==(const List<T>& b) {
-		if (size == 0 && b.size == 0)
-			throw ("Lists are empty");
+	if (size == 0 && b.size == 0)	// if lists are empty 
+		throw ("Lists are empty");	// throw exception
 
-		if (size == b.size)
-		{
-			Element* tempa = head;
-			Element* tempb = b.head;
-			while ((tempa->nextptr != nullptr) && (tempb->nextptr != nullptr))
-			{
-				if (tempa->data != tempb->data) return false;
-				tempa = tempa->nextptr;
-				tempb = tempb->nextptr;
-			}
-			if (tempa->data != tempb->data) return false;
-			return true;
+	if (size == b.size) {
+		Element* tempa = head;
+		Element* tempb = b.head;
+
+		while ((tempa->nextptr != nullptr) && (tempb->nextptr != nullptr)) {
+			if (tempa->data != tempb->data) 
+				return false;
+
+			tempa = tempa->nextptr;
+			tempb = tempb->nextptr;
 		}
-		else return false;
+		if (tempa->data != tempb->data) 
+			return false;
+
+		return true;
+	}
+	else 
+		return false;
 }
 
 template<typename T>
