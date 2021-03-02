@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <vector>
 #include "errorHandler.h"
 
 void Run(const char* file_name);
@@ -23,25 +24,36 @@ void Run(const char* file_name) {
 	std::ifstream in_file;
 	std::ofstream out_file;
 
-	std::string g_file_str;
-	std::string h_file_str;
+	std::vector<std::string> g_file_str;
+	std::vector<std::string> h_file_str;
 
-	char sym;
+	char sym{ -1 };
 
 	in_file.open(file_name, std::ios::in);
 
 	if (!in_file.is_open())
 		throw errorHandler(errors::input_error);
 
+	std::string number;
+
 	while (!in_file.fail()) {
 		if (in_file.good()) {
-			in_file.get(sym);
+			if (sym == -1 || sym == ' ' || sym == '\r' || sym == '\n' || sym == '\t')
+				in_file.get(sym);
+
 			if (std::isdigit(static_cast<unsigned char>(sym))) {
-				if ((sym - '0') % 2 == 0 && (sym - '0') % 4 == 0 && (sym - '0') % 6 != 0) {
-					g_file_str.push_back(sym);
+				while (std::isdigit(static_cast<unsigned char>(sym)) && !in_file.fail()) {
+					number += sym;
+					in_file.get(sym);
 				}
-				else
-					h_file_str.push_back(sym);
+				if (std::stoi(number) % 2 == 0 && std::stoi(number) % 4 == 0 && std::stoi(number) % 6 != 0) {
+					g_file_str.push_back(number);
+					number = "";
+				}
+				else {
+					h_file_str.push_back(number);
+					number = "";
+				}
 			}
 			else if(std::isalpha(static_cast<unsigned char>(sym)))
 				throw errorHandler(errors::invalid_symbol);
@@ -55,7 +67,7 @@ void Run(const char* file_name) {
 	if (!out_file.is_open())
 		throw errorHandler(errors::output_error);
 
-	for (int i = 0; i < g_file_str.length(); i++) {
+	for (int i = 0; i < g_file_str.size(); i++) {
 		out_file << g_file_str[i] << " ";
 	}
 	out_file.close();
@@ -64,7 +76,7 @@ void Run(const char* file_name) {
 	if (!out_file.is_open())
 		throw errorHandler(errors::output_error);
 
-	for (int i = 0; i < h_file_str.length(); i++) {
+	for (int i = 0; i < h_file_str.size(); i++) {
 		out_file << h_file_str[i] << " ";
 	}
 	out_file.close();
