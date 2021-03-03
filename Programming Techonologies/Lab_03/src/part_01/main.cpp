@@ -41,6 +41,13 @@ void Run(const char* file_name) {
 			if (sym == -1 || sym == ' ' || sym == '\r' || sym == '\n' || sym == '\t')
 				in_file.get(sym);
 
+			if (sym == '-' && number.size() == 0) {
+				number += sym;
+				in_file.get(sym);
+			}
+			else if (number.size() > 0)
+				throw errorHandler(errors::invalid_symbol);
+				
 			if (std::isdigit(static_cast<unsigned char>(sym))) {
 				while (std::isdigit(static_cast<unsigned char>(sym)) && !in_file.fail()) {
 					number += sym;
