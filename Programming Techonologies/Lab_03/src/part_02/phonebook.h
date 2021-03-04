@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <string>
+#include "errorHandler.h"
 
 class phoneBook {
 public:
