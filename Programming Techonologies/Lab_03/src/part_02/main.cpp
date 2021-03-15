@@ -1,49 +1,85 @@
 #include <iostream>
 #include <vector>
+#include <string>
+#include <fstream>
 #include "phoneBook.h"
 #include "errorHandler.h"
 
-void FindNumber(std::vector<phoneBook> v1);
-void SinceYear(std::vector<phoneBook> v1);
-void NumbersOnStreet(std::vector<phoneBook> v1);
+void writeToFile(std::string file_path, std::vector<phoneBook> v1);
+void readFile(std::string file_path);
+void FindNumber(std::string file_path);
+void SinceYear(std::string file_path);
+void NumbersOnStreet(std::string file_path);
 
 
 int main() {
 	try {
-		phoneBook a = phoneBook("Petrov", "Gorkogo", 25, 2003);
-		phoneBook b = phoneBook("Sidorov", "Lenina", 11, 2013);
-		phoneBook c = phoneBook("Pidorov", "Mira", 4, 2011);
-		phoneBook d = phoneBook("Smirnov", "Gorkogo", 25, 2007);
-		phoneBook e = phoneBook();
+		std::string path = "outputstructures.txt";
 
+		phoneBook a("Petrov", "Gorkogo", 25, 2003);
+		phoneBook b("Sidorov", "Lenina", 11, 2013);
+		phoneBook c("Pidorov", "Mira", 4, 2011);
+		phoneBook d("Smirnov", "Gorkogo", 25, 2007);
+		phoneBook e;
+
+		std::vector<phoneBook> v1{ a,b,c,d };
 		std::cin >> e;
+		v1.push_back(e);
 
-		std::vector<phoneBook> v;
-		v.push_back(a);
-		v.push_back(b);
-		v.push_back(c);
-		v.push_back(d);
-		v.push_back(e);
+		writeToFile(path, v1);
+		readFile(path);
 
-		NumbersOnStreet(v);
-		std::cout << std::endl;
-		SinceYear(v);
-		std::cout << std::endl;
-		FindNumber(v);
-		std::cout << std::endl;
-		std::cout << std::endl;
-		std::cout << b;
-
+		FindNumber(path);
+		SinceYear(path);
+		NumbersOnStreet(path);
+		
+		return 0;
 	}
 	catch (errorHandler &exp) {
 		std::cout << "Error: " << exp.print();
 		exit(1);
 	}
-
-	return 0;
 }
 
-void FindNumber(std::vector<phoneBook> v1) {
+void writeToFile(std::string file_path, std::vector<phoneBook> v1) {
+	std::ofstream fout;
+	fout.open(file_path, std::ofstream::out);
+	if (!fout.is_open())
+		throw errorHandler(errors::output_err);
+
+	for (int i = 0; i < v1.size(); i++) {
+		fout.write((char*)&v1[i], sizeof(phoneBook));
+	}
+	fout.close();
+}
+
+void readFile(std::string file_path) {
+	std::ifstream fin;
+	fin.open(file_path, std::ifstream::in);
+	if (!fin.is_open())
+		throw errorHandler(errors::input_err);
+
+	std::vector<phoneBook> v1;
+	phoneBook temp;
+	while (fin.read((char*)&temp, sizeof(phoneBook))) {
+		temp.Print();
+	}
+	fin.close();
+}
+
+void FindNumber(std::string file_path) {
+	std::ifstream fin;
+	fin.open(file_path, std::ifstream::in);
+	if (!fin.is_open())
+		throw errorHandler(errors::input_err);
+
+	std::vector<phoneBook> v1;
+	phoneBook temp;
+	while (fin.read((char*)&temp, sizeof(phoneBook))) {
+		v1.push_back(temp);
+	}
+	fin.close();
+
 	if (v1.size() == 0)
 		throw errorHandler(errors::empty_vector_err);
 
@@ -61,7 +97,19 @@ void FindNumber(std::vector<phoneBook> v1) {
 	throw errorHandler(errors::find_err);
 }
 
-void SinceYear(std::vector<phoneBook> v1) {
+void SinceYear(std::string file_path) {
+	std::ifstream fin;
+	fin.open(file_path, std::ifstream::in);
+	if (!fin.is_open())
+		throw errorHandler(errors::input_err);
+
+	std::vector<phoneBook> v1;
+	phoneBook temp;
+	while (fin.read((char*)&temp, sizeof(phoneBook))) {
+		v1.push_back(temp);
+	}
+	fin.close();
+
 	if (v1.size() == 0)
 		throw errorHandler(errors::empty_vector_err);
 
@@ -81,7 +129,19 @@ void SinceYear(std::vector<phoneBook> v1) {
 	std::cout << "\nCount of numbers installed since " << fyear << " is " << count << std::endl;
 }
 
-void NumbersOnStreet(std::vector<phoneBook> v1) {
+void NumbersOnStreet(std::string file_path) {
+	std::ifstream fin;
+	fin.open(file_path, std::ifstream::in);
+	if (!fin.is_open())
+		throw errorHandler(errors::input_err);
+
+	std::vector<phoneBook> v1;
+	phoneBook temp;
+	while (fin.read((char*)&temp, sizeof(phoneBook))) {
+		v1.push_back(temp);
+	}
+	fin.close();
+
 	if (v1.size() == 0)
 		throw errorHandler(errors::empty_vector_err);
 

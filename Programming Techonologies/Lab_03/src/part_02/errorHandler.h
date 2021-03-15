@@ -9,6 +9,8 @@ enum class errors {
 	empty_vector_err,
 	find_err,
 	invalid_year,
+	input_err,
+	output_err,
 
 };
 

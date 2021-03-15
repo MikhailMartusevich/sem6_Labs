@@ -15,6 +15,12 @@ errorHandler::errorHandler(errors type) {
 	case errors::invalid_year:
 		errorMessage = "Invalid year";
 		break;
+	case errors::input_err:
+		errorMessage = "Invalid input file";
+		break;
+	case errors::output_err:
+		errorMessage = "Invalid output file";
+		break;
 	case errors::null_err:
 	default:
 		errorMessage = "Unknown error";
