@@ -18,7 +18,7 @@ int main() {
 
 		phoneBook a("Petrov", "Gorkogo", 25, 2003);
 		phoneBook b("Sidorov", "Lenina", 11, 2013);
-		phoneBook c("Pidorov", "Mira", 4, 2011);
+		phoneBook c("Ivanov", "Mira", 4, 2011);
 		phoneBook d("Smirnov", "Gorkogo", 25, 2007);
 		phoneBook e;
 
@@ -29,9 +29,9 @@ int main() {
 		writeToFile(path, v1);
 		readFile(path);
 
-		FindNumber(path);
-		SinceYear(path);
-		NumbersOnStreet(path);
+		//FindNumber(path);
+		//SinceYear(path);
+		//NumbersOnStreet(path);
 		
 		return 0;
 	}

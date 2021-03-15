@@ -7,11 +7,11 @@
 
 class phoneBook {
 public:
-	std::string lastName = "";
-	std::string street = "";
+	char lastName[20];
+	char street[15];
 	int houseNumber = 0;
 	int releaseYear = 0;
-	std::string phoneNumber = "";
+	int phoneNumber = 0;
 
 
 	friend std::istream& operator>> (std::istream& in, phoneBook& ph);

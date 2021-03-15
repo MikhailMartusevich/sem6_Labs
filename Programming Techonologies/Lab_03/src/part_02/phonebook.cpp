@@ -29,18 +29,18 @@ std::ostream& operator<<(std::ostream& out, phoneBook& ph) {
 }
 
 phoneBook::phoneBook() {
-	lastName = "";
-	street = "";
+	strcpy_s(lastName, "");
+	strcpy_s(street, "");
 	houseNumber = 0;
 	releaseYear = 0;
-	phoneNumber = std::to_string(rand() % 899999 + 100000);
+	phoneNumber = rand() % 899999 + 100000;
 }
 
 phoneBook::phoneBook(const char* _lastname, const char* _street, int _number, int _year) {
-	lastName = _lastname;
-	street = _street;
+	strcpy_s(lastName, _lastname);
+	strcpy_s(street, _street);
 	houseNumber = _number;
 	releaseYear = _year;
-	phoneNumber = std::to_string(rand() % 899999 + 100000);
+	phoneNumber = rand() % 899999 + 100000;
 }
 
