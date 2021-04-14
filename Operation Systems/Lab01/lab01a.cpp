@@ -5,12 +5,13 @@
 #include <stdlib.h>
 #include <cstdlib>
 #include <iostream>
-const int N = 3;
-const float M = 2;
+const int N = 5;
+const float M = 1.5;
 
 
 
 int main() {
+	
 
 	int result = 0; // result of scalar multiply
 	int fd[2];
@@ -38,20 +39,34 @@ int main() {
 	int elem_count = (childs_count == 0) ? N : (N / childs_count);			// elements per child
 
 	int parent_elem_count = (childs_count == 0) ? N : (N - elem_count * childs_count);	// elements for parent
-	
+
+	static int k_index; //child coefficent
+
+	std::cout << "Total proc count: " << proc_count << std::endl;	
+	std::cout << "Childs count: " << childs_count << std::endl;
+	std::cout << "Childs elems count: " << elem_count << std::endl;
+	std::cout << "Parent elems count: " << parent_elem_count << std::endl;
 
 	if (childs_count > 0) {
 		for (static int i = 0; i < childs_count; i++) {
 			if (fork() == 0) {
-				int r = 0;
-				for (static int i = 0; i < N - parent_elem_count; i++) {
-					r += vectorA[i] * vectorB[i];
+				std::cout << "Opened child" <<std::endl;
+				int r;
+				if (i > 0)
+					read(fd[0], &r, sizeof(r));
+				else 
+					r = 0;
+				for (int i = 0; i < elem_count; i++) {
+					r += vectorA[i + k_index] * vectorB[i + k_index];
 				}
+				std::cout << "Child result: " << r << std::endl;
+				std::cout << "Static index: " << k_index << std::endl;
 				write(fd[1],&r, sizeof(r));
 				exit(0);
 			}
+			wait(0);
+			k_index += elem_count;
 		}
-		wait(0);
 	}
 	if (childs_count > 0)
 		read(fd[0], &result, sizeof(result));
