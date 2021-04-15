@@ -7,4 +7,4 @@ This repo contains laboratory works for semester 6
 * Data Bases **(WIP)**
 * Operation Systems
 * Modelling **(WIP)**
-* Controll theory **(WIP)**
+* Control Theory **(WIP)**
