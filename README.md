@@ -4,6 +4,7 @@ This repo contains laboratory works for semester 6
 
 ## Disciplines ##
 * Programming Techologies
-* Data Bases **(Work in progress)**
-* Operation Systems **(Work in progress)**
-* Modelling **(Work in progress)**
+* Data Bases **(WIP)**
+* Operation Systems
+* Modelling **(WIP)**
+* Controll theory **(WIP)**
