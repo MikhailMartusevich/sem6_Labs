@@ -5,8 +5,8 @@
 #include <stdlib.h>
 #include <cstdlib>
 #include <iostream>
-const int N = 5;
-const float M = 1.5;
+const int N = 3;
+const float M = 10;
 
 
 
@@ -32,11 +32,11 @@ int main() {
 		std::cin >> vectorB[i];
 
 
-	int proc_count = (N / M == 0) ? 1 : (N / M);						// all processes
+	int proc_count = (N / M <= 1) ? 1 : (N / M);						// all processes
 
 	int childs_count = proc_count - 1;							// childs
 
-	int elem_count = (childs_count == 0) ? N : (N / childs_count);			// elements per child
+	int elem_count = (childs_count == 0) ? 0 : (N / childs_count);			// elements per child
 
 	int parent_elem_count = (childs_count == 0) ? N : (N - elem_count * childs_count);	// elements for parent
 
@@ -75,7 +75,7 @@ int main() {
 		result += vectorA[N - 1 - i] * vectorB[N - 1 - i];
 	}
 	
-	std::cout << "Result of scalar multiply: " << result;
+	std::cout << "Result of scalar multiply: " << result << std::endl;
 
 	close(fd[0]);
 	close(fd[1]);
