@@ -6,7 +6,7 @@
 #include <cstdlib>
 #include <iostream>
 const int N = 3;
-const float M = 10;
+const float M = 1;
 
 
 
@@ -48,9 +48,9 @@ int main() {
 	std::cout << "Parent elems count: " << parent_elem_count << std::endl;
 
 	if (childs_count > 0) {
-		for (static int i = 0; i < childs_count; i++) {
+		for (int i = 0; i < childs_count; i++) {
 			if (fork() == 0) {
-				std::cout << "Opened child" <<std::endl;
+				std::cout << "Opened child with pid: " << getpid() << std::endl;
 				int r;
 				if (i > 0)
 					read(fd[0], &r, sizeof(r));
@@ -64,10 +64,14 @@ int main() {
 				write(fd[1],&r, sizeof(r));
 				exit(0);
 			}
-			wait(0);
+			
 			k_index += elem_count;
 		}
 	}
+
+	for (int i = 0; i < childs_count; i++) 
+		wait(0);	
+	
 	if (childs_count > 0)
 		read(fd[0], &result, sizeof(result));
 
