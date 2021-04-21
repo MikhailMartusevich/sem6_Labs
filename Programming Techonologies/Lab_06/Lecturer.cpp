@@ -1,0 +1,16 @@
+#include "Lecturer.h"
+
+//////////////////////////////////////////////////////////////////////
+// Construction/Destruction
+//////////////////////////////////////////////////////////////////////
+
+Lecturer::Lecturer(const std::string& name, const std::string& position)
+	: Reader(name), _position(position)
+{
+
+}
+
+Lecturer::~Lecturer()
+{
+
+}
