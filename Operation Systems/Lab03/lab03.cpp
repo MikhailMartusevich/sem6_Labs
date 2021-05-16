@@ -6,6 +6,7 @@
 #include <sys/wait.h>
 #include <iostream>
 #include <string>
+#include <cstring>
 #include <vector>
 
 int shmid;
@@ -15,14 +16,13 @@ sembuf Plus1 = {0, 1, 0};
 sembuf Minus1 = {0, -1, 0};
 
 struct max_word {
-	std::string word;
-
+	char word[50];
 } *mem_word;
 
 
 int main() {
 
-	shmid = shmget(IPC_PRIVATE, 25, IPC_CREAT | 0666);
+	shmid = shmget(IPC_PRIVATE, sizeof(max_word), IPC_CREAT | 0666);
 	if (shmid < 0) {
 		std::cout << "Failed to create shared memory" << std::endl;
 		return 1;
@@ -87,9 +87,9 @@ int main() {
 	
 	std::cout << "Parent Word: " << text_words[0][j_max] << std::endl;
 
-	semop(semid, &Plus1, 1);
 	mem_word = (max_word*)shmat(shmid, NULL, 0);
-	mem_word->word = text_words[0][j_max];
+	strcpy(mem_word->word, text_words[0][j_max].c_str());
+	semop(semid, &Plus1, 1);
 	
 
 	for (int i = 1; i < text_words.size(); i++) {
@@ -108,9 +108,7 @@ int main() {
 
 			semop(semid, &Minus1, 1);
 			if (mem_word->word != text_words[i][child_j_max]) {
-				std::cout << "Mem_word: " <<  mem_word->word << std::endl;
-				mem_word->word = "No result";
-				std::cout << "Mem_word: " <<  mem_word->word << std::endl;
+				strcpy(mem_word->word, "No result");
 			}
 			semop(semid, &Plus1, 1);
 
