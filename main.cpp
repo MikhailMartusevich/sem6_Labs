@@ -1,70 +1,109 @@
 #include <iostream>
 #include <vector>
-#include <algorithm>
 #include <ios>
 
-int cmp(const void * x1, const void * x2) {
-    return ( *(int*)x1 - *(int*)x2 );
-}
-// 0 7 1 -> 0 1 7 -> 1 | 5 10 1 -> 1 5 10 -> 0: 1 - 0 = 1
-// 0 7 6 -> 0 6 7 -> 1 | 5 10 6 -> 5 6 10 -> 1: 1 - 1 = 0
-// 0 7 11 -> 0 7 11 -> 2 | 5 10 11 -> 5 10 11 -> 2: 2 - 2 = 0
+std::pair<int, int> partition3(std::vector<int> &v, int l, int r) {
+    int lt = l;
+    int gt = r;
+    int pivot = v[l];
 
-int n_count(std::vector<int> v, int p) {
-    v.push_back(p);
-    // qsort(&v[0], v.size(), sizeof(int), cmp);
-    std::sort(v.begin(), v.end());
-    int* pr = static_cast<int*>(std::bsearch(&p, v.data(), v.size(), sizeof(int), cmp));
-    return pr - v.data();
+    int i = l;
+    while (i <= gt) {
+        if (v[i] < pivot) {
+            std::swap(v[lt], v[i]);
+            lt += 1;
+            i += 1;
+        } else if (v[i] > pivot) {
+            std::swap(v[gt], v[i]);
+            gt -= 1;
+        } else i += 1;
+    }
+
+    return std::make_pair(lt, gt);
 }
 
-std::vector<int> count_points(std::vector<int> s, std::vector<int> e, std::vector<int> p) {
-    // qsort(&s[0], s.size(), sizeof(int), cmp);
-    // qsort(&e[0], e.size(), sizeof(int), cmp);
-    
+void quicksort(std::vector<int> &v, int l, int r) {
+    std::pair<int, int> m;
+    while (l < r) {
+        m = partition3(v, l, r);
+        quicksort(v, l, m.first - 1);
+        l = m.second + 1;
+    }
+}
+
+int search_bigequal(std::vector<int> &v, int l, int r, int value) {
+    if (l == r) {
+        return value >= v[l] ? (l + 1) : 0;
+    }
+    int m = (l + r) / 2;
+
+    if (value < v[m]) 
+        return search_bigequal(v, l, m, value);
+
+    int ret = search_bigequal(v, m+1, r, value);
+    return ret == 0 ? m + 1: ret;
+}
+
+int search_big(std::vector<int> &v, int l, int r, int value) {
+    if (l == r) {
+        return value > v[l] ? (l + 1) : 0;
+    }
+
+    int m = (l + r) / 2;
+
+    if (value <= v[m]) 
+        return search_big(v, l, m, value);
+
+    int ret = search_big(v, m+1, r, value);
+    return ret == 0 ? m + 1 : ret;
+}
+
+std::vector<int> answer(std::vector<int> &s, std::vector<int> &e, std::vector<int> &p) {
+    quicksort(s, 0, s.size()-1);
+    quicksort(e, 0, e.size()-1);
     int n, m;
-    std::vector<int> result;
+    std::vector<int> res;
 
     for (size_t i = 0; i < p.size(); i++) {
         n = 0; m = 0;
-        n = n_count(s, p[i]);
-        m = n_count(e, p[i]);
-
-        result.push_back(n-m);
+        n = search_bigequal(s, 0, s.size() - 1, p[i]);
+        m = search_big(e, 0, e.size() - 1, p[i]);
+        res.push_back(n - m);
     }
-    return result;
+    return res;
 }
 
 int main() {
-    std::ios_base::sync_with_stdio(false)
-    int n = 0, m = 0;
+    std::ios_base::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+    std::cout.tie(nullptr);
+
+    int n , m;
+    std::vector<int> s;
+    std::vector<int> e;
+    std::vector<int> p;
+
     std::cin >> n >> m;
-    
+
     int start, end;
-    int point;
-
-    std::vector<int> starts;
-    std::vector<int> ends;
-    std::vector<int> points;
-    std::vector<int> result;
-
     for (size_t i = 0; i < n; i++) {
         std::cin >> start >> end;
-        starts.push_back(start);
-        ends.push_back(end);
-    }
-
-    for (size_t i = 0; i < m; i++) {
-        std::cin >> point;
-        points.push_back(point);
+        s.push_back(start);
+        e.push_back(end);
     }
     
-    result = count_points(std::move(starts), std::move(ends), std::move(points));
+    int point;
+    for (size_t i = 0; i < m; i++) {
+        std::cin >> point;
+        p.push_back(point);
+    }
 
+    std::vector<int> result = answer(s, e, p);
+    
     for (size_t i = 0; i < result.size(); i++) {
         std::cout << result[i] << " ";
     }
+    std::cout << std::endl;
     
-
     return 0;
 }
