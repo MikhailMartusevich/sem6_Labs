@@ -1,109 +1,157 @@
 #include <iostream>
+#include <string>
 #include <vector>
-#include <ios>
+#include <cmath>
 
-std::pair<int, int> partition3(std::vector<int> &v, int l, int r) {
-    int lt = l;
-    int gt = r;
-    int pivot = v[l];
+struct Node {
+    std::string data;
+    Node *next;
+};
 
-    int i = l;
-    while (i <= gt) {
-        if (v[i] < pivot) {
-            std::swap(v[lt], v[i]);
-            lt += 1;
-            i += 1;
-        } else if (v[i] > pivot) {
-            std::swap(v[gt], v[i]);
-            gt -= 1;
-        } else i += 1;
+class List {
+public:
+    Node *head;
+    Node *tail;
+
+    List() {
+        head = nullptr;
+        tail = nullptr;
     }
 
-    return std::make_pair(lt, gt);
+    void add_node(std::string value) {
+        Node *temp = new Node;
+        temp->data = value;
+        temp->next = nullptr;
+
+        if (head == nullptr) {
+            head = temp;
+            tail = temp;
+        } else {
+            temp->next = head;
+            head = temp;
+            // tail->next = temp;
+            // tail = tail->next;
+        }
+    }
+
+    void delete_node(std::string value) {
+        Node *curr = head;
+        Node *prev = nullptr;
+        
+        while (curr != nullptr) {
+            if (curr->data == value) {
+                if (prev == nullptr) {
+                    head = curr->next;
+                } else {
+                    prev->next = curr->next;
+                }
+            }
+            prev = curr;
+            curr = curr->next;
+        }
+
+        delete curr;
+    }
+
+    bool Find(std::string value) {
+        Node *temp = head;
+        while (temp != nullptr) {
+            if (temp->data == value)
+                return true;
+            temp = temp->next;
+        }
+        return false;
+    }
+
+    void Show() {
+        Node *temp = head;
+        while (temp != nullptr) {
+            std::cout << temp->data << " ";
+            temp = temp->next;
+        }
+    }
+};
+
+double s_pow(double a, int power) {
+    if (power == 0) { 
+        return 1;
+    }
+    if (power % 2 == 0) {
+        return s_pow(a * a, power / 2);
+    }
+
+    return a * s_pow(a, power - 1);
 }
 
-void quicksort(std::vector<int> &v, int l, int r) {
-    std::pair<int, int> m;
-    while (l < r) {
-        m = partition3(v, l, r);
-        quicksort(v, l, m.first - 1);
-        l = m.second + 1;
+int m = 0;
+std::vector<List> hash_table;
+
+int hash(std::string S) {
+    long p = 1000000007; int x = 263;
+    long long result = 0;
+
+    for (int i = 0; i < S.size(); i++) {
+        result += (int(S[i]) * static_cast<long long>(s_pow(x, i))) % p;
     }
+    result = ((result % p) + p) % p;
+    
+    return result % m;
 }
 
-int search_bigequal(std::vector<int> &v, int l, int r, int value) {
-    if (l == r) {
-        return value >= v[l] ? (l + 1) : 0;
-    }
-    int m = (l + r) / 2;
+void Add(std::string S) {
+    int hash_index = hash(S);
+    if (!hash_table[hash_index].Find(S))
+        hash_table[hash_index].add_node(S);
+}   
 
-    if (value < v[m]) 
-        return search_bigequal(v, l, m, value);
-
-    int ret = search_bigequal(v, m+1, r, value);
-    return ret == 0 ? m + 1: ret;
+void Del(std::string S) {
+    int hash_index = hash(S);
+    hash_table[hash_index].delete_node(S);
 }
 
-int search_big(std::vector<int> &v, int l, int r, int value) {
-    if (l == r) {
-        return value > v[l] ? (l + 1) : 0;
-    }
+void Find(std::string S) {
+    int hash_index = hash(S);
+    bool contains = hash_table[hash_index].Find(S);
 
-    int m = (l + r) / 2;
-
-    if (value <= v[m]) 
-        return search_big(v, l, m, value);
-
-    int ret = search_big(v, m+1, r, value);
-    return ret == 0 ? m + 1 : ret;
+    if (contains)
+        std::cout << "yes" << std::endl;
+    else 
+        std::cout << "no" << std::endl;
 }
 
-std::vector<int> answer(std::vector<int> &s, std::vector<int> &e, std::vector<int> &p) {
-    quicksort(s, 0, s.size()-1);
-    quicksort(e, 0, e.size()-1);
-    int n, m;
-    std::vector<int> res;
+void Check(int i) {
 
-    for (size_t i = 0; i < p.size(); i++) {
-        n = 0; m = 0;
-        n = search_bigequal(s, 0, s.size() - 1, p[i]);
-        m = search_big(e, 0, e.size() - 1, p[i]);
-        res.push_back(n - m);
-    }
-    return res;
+    hash_table[i].Show();
+
+    std::cout << std::endl;
 }
 
 int main() {
-    std::ios_base::sync_with_stdio(false);
-    std::cin.tie(nullptr);
-    std::cout.tie(nullptr);
+    int n;
+    std::vector<std::pair<std::string, std::string>> commands;
 
-    int n , m;
-    std::vector<int> s;
-    std::vector<int> e;
-    std::vector<int> p;
+    std::cin >> m;
+    hash_table.resize(m);
 
-    std::cin >> n >> m;
+    std::cin >> n;
 
-    int start, end;
+    std::string action, str;
+    
     for (size_t i = 0; i < n; i++) {
-        std::cin >> start >> end;
-        s.push_back(start);
-        e.push_back(end);
-    }
-    
-    int point;
-    for (size_t i = 0; i < m; i++) {
-        std::cin >> point;
-        p.push_back(point);
+        std::cin >> action >> str;
+        commands.push_back(std::make_pair(action, str));
     }
 
-    std::vector<int> result = answer(s, e, p);
-    
-    for (size_t i = 0; i < result.size(); i++) {
-        std::cout << result[i] << " ";
+    for (size_t i = 0; i < commands.size(); i++) {
+        if (commands[i].first == "add")
+            Add(commands[i].second);
+        else if (commands[i].first == "del")
+            Del(commands[i].second);
+        else if (commands[i].first == "find")
+            Find(commands[i].second);
+        else 
+            Check(std::stoi(commands[i].second));
     }
-    std::cout << std::endl;
-    
+
     return 0;
 }
